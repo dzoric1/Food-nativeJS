@@ -113,13 +113,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function openModal() {
-    modal.classList.toggle('show');
+    modal.classList.add('show');
+    modal.classList.remove('hide');
     document.body.style.overflow = 'hidden';
-    // clearInterval(modalTimerId);
+    clearInterval(modalTimerId);
   }
 
   function closeModal() {
-    modal.classList.toggle('show');
+    modal.classList.add('hide');
+    modal.classList.remove('show');
     document.body.style.overflow = '';
   }
 
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // const modalTimerId = setTimeout(openModal, 15000);
+  const modalTimerId = setTimeout(openModal, 50000);
 
   function showModalByScroll() {
     if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -223,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const forms = document.querySelectorAll('form');
 
   const message = {
-    loading: 'Загрузка',
+    loading: 'img/spinner.svg',
     success: 'Успешно',
     failure: 'Ошибка',
   };
@@ -236,10 +238,14 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const statusMessage = document.createElement('div');
-      statusMessage.classList.add('status');
-      statusMessage.textContent = message.loading;
-      form.append(statusMessage);
+      const statusMessage = document.createElement('img');
+      statusMessage.src = message.loading;
+      statusMessage.style.cssText = `
+        display: block;
+        margin: 0 auto;
+      `;
+
+      form.insertAdjacentElement('afterend', statusMessage);
 
       const request = new XMLHttpRequest();
       request.open('POST', 'server.php');
@@ -264,8 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
           statusMessage.remove();
         } else {
           showThanksModal(message.failure);
-          // form.reset();
-          // statusMessage.remove();
+          form.reset();
+          statusMessage.remove();
         }
       });
     });
